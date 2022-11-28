@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -13,7 +14,7 @@ type Controller interface {
 
 type controller struct{}
 
-func NewController() Controller{
+func NewController() Controller {
 	return &controller{}
 }
 
@@ -22,7 +23,8 @@ func init() {
 	books = append(books, Book{Id: 2, Title: "走れメロス", Author: "太宰治", Year: 1940, Genre: "novel"})
 }
 
-func (c *controller) GetAllBooks(w http.ResponseWriter, _ *http.Request) {
+func (c *controller) GetAllBooks(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.URL)
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	outs, _ := json.MarshalIndent(books, "", "\t")
