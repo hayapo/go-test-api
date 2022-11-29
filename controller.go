@@ -3,7 +3,6 @@ package api
 import (
 	"encoding/json"
 	"strconv"
-	"fmt"
 	"net/http"
 )
 
@@ -27,6 +26,7 @@ func (c *controller) GetAll(w http.ResponseWriter, r *http.Request) {
 	if len(books) == 0 {
 		w.WriteHeader(http.StatusNoContent)
 	}
+
 	w.Header().Set("Content-Type", "application/json")
 	output, _ := json.MarshalIndent(books, "", "\t")
 	w.Write(output)
@@ -34,8 +34,8 @@ func (c *controller) GetAll(w http.ResponseWriter, r *http.Request) {
 
 func (c *controller) GetBook(w http.ResponseWriter, r *http.Request) {
 	param := r.URL.Query().Get("Id")
+
 	if param == "" {
-		w.WriteHeader(http.StatusNoContent)
 		return
 	}
 	id, err := strconv.Atoi(param)
@@ -52,9 +52,9 @@ func (c *controller) GetBook(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-		w.Header().Set("Content-Type", "application/json")
-		output, _ := json.MarshalIndent(books, "", "\t")
-		w.Write(output)
+	w.Header().Set("Content-Type", "application/json")
+	output, _ := json.MarshalIndent(books, "", "\t")
+	w.Write(output)
 }
 
 func (c *controller) PutBook(w http.ResponseWriter, r *http.Request) {
@@ -66,6 +66,7 @@ func (c *controller) PutBook(w http.ResponseWriter, r *http.Request) {
 
 	id, _ := strconv.Atoi(param["Id"][0])
 	year, _ := strconv.Atoi(param["Year"][0])
+
 	newBook := Book{Id: id, Title: param["Title"][0], Author: param["Author"][0], Year: year, Genre: param["Genre"][0]}
 	books = append(books, newBook)
 	
@@ -76,16 +77,19 @@ func (c *controller) PutBook(w http.ResponseWriter, r *http.Request) {
 
 func (c *controller) UpdateBook(w http.ResponseWriter, r *http.Request) {
 	param := r.URL.Query()
+
 	if param == nil {
 	 	return
 	}
+
 	id, _ := strconv.Atoi(param["Id"][0])
 	year, _ := strconv.Atoi(param["Year"][0])
+
 	for i, book := range books {
 		if book.Id == id {
 			books[i] = books[len(books)-1]
 			books = books[:len(books)-1]
-			fmt.Println(books)
+			
 			updateBook := Book{Id: id, Title: param["Title"][0], Author: param["Author"][0], Year: year, Genre: param["Genre"][0]}
 			books = append(books, updateBook)
 
@@ -99,16 +103,17 @@ func (c *controller) UpdateBook(w http.ResponseWriter, r *http.Request) {
 
 func (c *controller) DeleteBook(w http.ResponseWriter, r *http.Request) {
 	param := r.URL.Query()
+
 	if param == nil {
 		return
 	}
+	
 	id, _ := strconv.Atoi(param["Id"][0])
 
 	for i, book := range books {
 		if book.Id == id {
 			books[i] = books[len(books)-1]
 			books = books[:len(books)-1]
-			fmt.Println(books)
 			return	
 		}
 	}
