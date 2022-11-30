@@ -23,9 +23,6 @@ func NewController() Controller {
 }
 
 func (c *controller) GetAll(w http.ResponseWriter, r *http.Request) {
-	if len(books) == 0 {
-		w.WriteHeader(http.StatusNoContent)
-	}
 
 	w.Header().Set("Content-Type", "application/json")
 	output, _ := json.MarshalIndent(books, "", "\t")
@@ -38,8 +35,8 @@ func (c *controller) GetBook(w http.ResponseWriter, r *http.Request) {
 	if param == "" {
 		return
 	}
-	id, err := strconv.Atoi(param)
-	
+
+	id, err := strconv.Atoi(param)	
 	if err != nil {
 		return
 	}
@@ -64,8 +61,12 @@ func (c *controller) PutBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, _ := strconv.Atoi(param["Id"][0])
-	year, _ := strconv.Atoi(param["Year"][0])
+	id, err_id := strconv.Atoi(param["Id"][0])
+	year, err_year := strconv.Atoi(param["Year"][0])
+
+	if err_id != nil && err_year != nil {
+		return
+	}
 
 	newBook := Book{Id: id, Title: param["Title"][0], Author: param["Author"][0], Year: year, Genre: param["Genre"][0]}
 	books = append(books, newBook)
@@ -82,8 +83,12 @@ func (c *controller) UpdateBook(w http.ResponseWriter, r *http.Request) {
 	 	return
 	}
 
-	id, _ := strconv.Atoi(param["Id"][0])
-	year, _ := strconv.Atoi(param["Year"][0])
+	id, err_id := strconv.Atoi(param["Id"][0])
+	year, err_year := strconv.Atoi(param["Year"][0])
+
+	if err_id != nil && err_year != nil {
+		return
+	}
 
 	for i, book := range books {
 		if book.Id == id {
@@ -108,7 +113,11 @@ func (c *controller) DeleteBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	id, _ := strconv.Atoi(param["Id"][0])
+	id, err := strconv.Atoi(param["Id"][0])
+
+	if err != nil {
+		return 
+	}
 
 	for i, book := range books {
 		if book.Id == id {
